@@ -55,6 +55,7 @@ public class Contact {
 
     //On définit les methodes pour réaliser les actions possibles
     //sur les contacts:
+
     //throws ContactNotFoundException  car cette méthode peux renvoyer une exception
     public void selectById(Integer id) throws ContactNotFoundException {
 
@@ -67,18 +68,36 @@ public class Contact {
             this.id = cursor.getInt(0);
             this.nom = cursor.getString(1);
             this.tel = cursor.getString(2);
-        }else{
+        } else {
             //création d'une exception personnalisé suite contact non trouvé lors du query
-            throw  new ContactNotFoundException();
+            throw new ContactNotFoundException();
+        }
+
+    }
+
+    public void selectByNom(Integer nom) throws ContactNotFoundException {
+
+        String where = "name ' " + nom + "'";
+        Cursor cursor = db.query(TABLE_NAME, COLUMNS, where, null, null, null, null);
+
+        //cursor.getCount() est le nombre d'éléments trouvé lors du query
+        //si supérieur à 0 donc trouvé,
+        if (cursor.getCount() > 0) {
+            this.id = cursor.getInt(0);
+            this.nom = cursor.getString(1);
+            this.tel = cursor.getString(2);
+        } else {
+            //création d'une exception personnalisé suite contact non trouvé lors du query
+            throw new ContactNotFoundException();
         }
 
     }
 
     //création d'une classe d'exception interne car ne sera utilisé que par la class Contact
 
-    public class ContactNotFoundException extends Exception{
+    public class ContactNotFoundException extends Exception {
 
-        public ContactNotFoundException(){
+        public ContactNotFoundException() {
 
             //on passe un String en paramètre au constructeur de la classe mère Exception
             super("Contact non trouvé");
