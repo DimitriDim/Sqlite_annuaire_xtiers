@@ -17,8 +17,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase db;
@@ -71,21 +69,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void search(View v) {
 
-        String nom = etSearch.getText().toString();
-        String columns[] = {"id", "name", "tel"};
-        String where = "name" + " = '" + nom + "'";
-        Cursor cursor = db.query("contacts", columns, where, null, null, null, null);
+        Contact contact = new Contact(this);
+        try {
 
-        if (cursor.getCount() < 1) {
-            Toast.makeText(this, "Personne inexistante", Toast.LENGTH_LONG).show();
-        } else {
-            cursor.moveToFirst();
-            String id = cursor.getString(0);
-            String name = cursor.getString(1);
-            String tel = cursor.getString(2);
-            etId.setText(id);
-            etName.setText(name);
-            etTel.setText(tel);
+            contact.selectByNom(etSearch.getText().toString());
+            etId.setText(contact.getId().toString());
+            etName.setText(contact.getNom().toString());
+            etTel.setText(contact.getTel().toString());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
