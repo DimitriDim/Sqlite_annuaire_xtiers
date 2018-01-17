@@ -59,25 +59,19 @@ public class Contact {
     //throws ContactNotFoundException  car cette méthode peux renvoyer une exception
     public void selectById(Integer id) throws ContactNotFoundException {
 
-        String where = "id ' " + id + "'";
-        Cursor cursor = db.query(TABLE_NAME, COLUMNS, where, null, null, null, null);
-
-        //cursor.getCount() est le nombre d'éléments trouvé lors du query
-        //si supérieur à 0 donc trouvé,
-        if (cursor.getCount() > 0) {
-            this.id = cursor.getInt(0);
-            this.nom = cursor.getString(1);
-            this.tel = cursor.getString(2);
-        } else {
-            //création d'une exception personnalisé suite contact non trouvé lors du query
-            throw new ContactNotFoundException();
-        }
-
+        String where = "id = ' " + id + "'";
+        select(where);
     }
 
     public void selectByNom(Integer nom) throws ContactNotFoundException {
 
-        String where = "name ' " + nom + "'";
+        String where = "name = ' " + nom + "'";
+        select(where);
+
+    }
+
+    private void select(String where) throws ContactNotFoundException {
+
         Cursor cursor = db.query(TABLE_NAME, COLUMNS, where, null, null, null, null);
 
         //cursor.getCount() est le nombre d'éléments trouvé lors du query
@@ -92,6 +86,7 @@ public class Contact {
         }
 
     }
+
 
     //création d'une classe d'exception interne car ne sera utilisé que par la class Contact
 
