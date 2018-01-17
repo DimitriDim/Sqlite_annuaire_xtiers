@@ -1,5 +1,6 @@
 package fr.m2i.sqlite_annuaire_xtiers;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,7 +25,12 @@ public class Contact {
 
     public Contact(Context ctxt) {
 
-        DbInit dbInit = new DbInit(ctxt);
+        //DbInit est singleton: pas de création direct via le constructeur de DbInit (private car singleton)
+        //passage pas la methode static getInstance qui va créer l'objet
+        DbInit dbInit = DbInit.getInstance(ctxt);
+
+        // constructeur à utiliser si DbInit n'était pas singleton
+        // DbInit dbInit = new DbInit(ctxt);
         db = dbInit.getWritableDatabase();
     }
 
@@ -55,7 +61,6 @@ public class Contact {
 
     //On définit les methodes pour réaliser les actions possibles
     //sur les contacts:
-
 
     public void selectById(Integer id) throws Exception {
 
@@ -95,8 +100,40 @@ public class Contact {
 
     }
 
+    public void update() throws Exception {
+        if (this.nom.equals("")) {
+            throw new ContacNameInvalidException();
+        }
+        //ContentValues tableau de clé - valeur
+        ContentValues values = new ContentValues();
+        values.put("name", this.nom);
+        values.put("tel", this.tel);
+        String where = "id ='" + this.id + "'";
+        db.update(TABLE_NAME, values, where, null);
+    }
 
-    //création d'une classe d'exception interne car ne sera utilisé que par la class Contact
+    public void insert() throws Exception {
+
+        if (this.nom.equals("")) {
+            throw new ContacNameInvalidException();
+        }
+        //ContentValues tableau de clé - valeur
+        ContentValues values = new ContentValues();
+        values.put("name", this.nom);
+        values.put("tel", this.tel);
+        db.insert(TABLE_NAME, null, values);
+    }
+
+
+    public void delete() throws Exception {
+
+        String where = "id ='" + this.id + "'";
+        db.delete(TABLE_NAME, where, null);
+
+    }
+
+
+    //création des classes d'exception interne car ne sera utilisé que par la class Contact
 
     public class ContactNotFoundException extends Exception {
 
@@ -115,7 +152,17 @@ public class Contact {
             //on passe un String en paramètre au constructeur de la classe mère Exception
             super("Plusieurs contacts trouvés");
         }
+    }
+
+    public class ContacNameInvalidException extends Exception {
+
+        public ContacNameInvalidException() {
+
+            //on passe un String en paramètre au constructeur de la classe mère Exception
+            super("vide");
+        }
 
     }
+
 
 }

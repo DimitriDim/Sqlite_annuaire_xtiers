@@ -9,6 +9,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+                        /* couche IHM */
+
+
 public class listes extends AppCompatActivity {
     SQLiteDatabase db;
     ListView lv1;
@@ -18,8 +21,8 @@ public class listes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listes);
 
-        //ouverture de la base de donnée
-        DbInit dbInit = new DbInit(this);
+        //ouverture de la base de donnée (singleton)
+        DbInit dbInit = DbInit.getInstance(this);
         db = dbInit.getWritableDatabase();
 
         lv1 = findViewById(R.id.listeAnnuaire);
@@ -28,11 +31,12 @@ public class listes extends AppCompatActivity {
         String columns[] = {"id", "name", "tel"};
 
         //lecture pas a pas dans la bdd
+
         Cursor cursor = db.query("contacts", columns, "", null, null, null, null);
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
-                list.add(cursor.getString(1));
+                list.add("Id : " + cursor.getString(0) + "   Nom : " + cursor.getString(1) + "   Tel : " + cursor.getString(2));
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list);

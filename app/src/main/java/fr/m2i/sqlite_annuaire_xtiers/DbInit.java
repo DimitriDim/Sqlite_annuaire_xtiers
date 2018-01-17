@@ -7,17 +7,34 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by Administrateur on 16/01/2018.
  */
+            /* couche DAL */
+
 
 //Cette classe prendra en charge la création de la base de données
 // et les modifications de structure lors des évolutions.
 public class DbInit extends SQLiteOpenHelper {
 
-    public DbInit(Context ctx) {
+    // La classe DbInit peut etre créée comme un singleton
+    //pour éviter les connexions multiples à la bdd
+    // - Constructeur privée
+    //- Une méthode static getInstance()
+
+    // variable instance pour mémoriser la premiere création
+    private static DbInit instance;
+
+    private DbInit(Context ctx) {
         //curseur factory pour parcourir les listes de données si neccessaire
         //non utilisé dans cet appli (null)
         super(ctx, "annuaire", null, 1);
     }
 
+    public static DbInit getInstance(Context ctxt) {
+
+        if (instance == null) {
+            instance = new DbInit(ctxt);
+        }
+        return instance;
+    }
 
     //Cette méthode aura pour rôle de créer la base de données lors de la première exécution.
     //Elle sera constituée essentiellement d'une série d'instructions db.execSQL(sql);
