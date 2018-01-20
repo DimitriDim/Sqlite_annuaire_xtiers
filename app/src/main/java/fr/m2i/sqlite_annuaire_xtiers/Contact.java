@@ -18,7 +18,7 @@ public class Contact {
     private Integer id;
     private String nom;
     private String tel;
-
+    private boolean nomExistant;
 
     SQLiteDatabase db;
 
@@ -71,7 +71,6 @@ public class Contact {
     public void selectByNom(String nom) throws Exception {
 
         String where = "name = '" + nom + "'";
-
         select(where);
 
 
@@ -90,12 +89,14 @@ public class Contact {
             this.id = cursor.getInt(0);
             this.nom = cursor.getString(1);
             this.tel = cursor.getString(2);
+            nomExistant=true;
         } else if (cursor.getCount() > 1) {
             //création d'une exception personnalisé suite plusieurs contacts  trouvé lors du query
             throw new ContactMultiplesException();
         } else {
+            nomExistant=false;
             //création d'une exception personnalisé suite contact non trouvé lors du query
-            throw new ContactNotFoundException();
+            //throw new ContactNotFoundException();
         }
 
     }
@@ -108,7 +109,7 @@ public class Contact {
         ContentValues values = new ContentValues();
         values.put("name", this.nom);
         values.put("tel", this.tel);
-        String where = "id ='" + this.id + "'";
+        String where = "name = '" + this.nom + "'";
         db.update(TABLE_NAME, values, where, null);
     }
 
@@ -130,6 +131,10 @@ public class Contact {
         String where = "id ='" + this.id + "'";
         db.delete(TABLE_NAME, where, null);
 
+    }
+
+    public boolean isNomExistant() {
+        return nomExistant;
     }
 
 

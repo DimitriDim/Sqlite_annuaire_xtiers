@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
         Contact contact = new Contact(this);
         try {
-
             contact.selectByNom(etSearch.getText().toString());
             etId.setText(contact.getId().toString());
             etName.setText(contact.getNom().toString());
@@ -96,14 +95,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void save(View v) {
-
         Contact contact = new Contact(this);
-        contact.setNom(etName.getText().toString());
-        contact.setTel(etTel.getText().toString());
 
         try {
-            contact.insert();
-            Toast.makeText(this, "enregistrement ok", Toast.LENGTH_LONG).show();
+            contact.selectByNom(etName.getText().toString());
+            contact.setNom(etName.getText().toString());
+            contact.setTel(etTel.getText().toString());
+
+            if(contact.isNomExistant()==false) {
+                contact.insert();
+                Toast.makeText(this, "enregistrement ok", Toast.LENGTH_LONG).show();
+            }
+            if(contact.isNomExistant()==true) {
+                contact.update();
+                Toast.makeText(this, "Modification ok", Toast.LENGTH_LONG).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -141,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.show(); // ne retourne pas le choix de l'utilisateur
         // arrivé à la ligne suivante, l'utilisateur n'a peut être pas encore répondu à la question (car appel asynchrone)
-
 
     }
 

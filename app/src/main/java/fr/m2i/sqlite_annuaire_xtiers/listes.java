@@ -41,5 +41,5 @@ public class listes extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list);
         lv1.setAdapter(adapter);
     }
-    
+
 }
