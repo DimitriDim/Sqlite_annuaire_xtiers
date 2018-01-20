@@ -18,7 +18,7 @@ public class Contact {
     private Integer id;
     private String nom;
     private String tel;
-    private boolean nomExistant;
+    private boolean idExistant,doublon;
 
     SQLiteDatabase db;
 
@@ -78,7 +78,7 @@ public class Contact {
 
     //throws car cette méthode peux renvoyer une exception
     private void select(String where) throws Exception {
-
+        doublon=false;
         //Cursor cursor = db.query(TABLE_NAME, COLUMNS, where,"", null, null, null,null);
         Cursor cursor = db.query("contacts", COLUMNS, where, null, null, null, null);
         //cursor.getCount() est le nombre d'éléments trouvé lors du query
@@ -89,12 +89,13 @@ public class Contact {
             this.id = cursor.getInt(0);
             this.nom = cursor.getString(1);
             this.tel = cursor.getString(2);
-            nomExistant=true;
+            idExistant=true;
         } else if (cursor.getCount() > 1) {
+            doublon=true;
             //création d'une exception personnalisé suite plusieurs contacts  trouvé lors du query
-            throw new ContactMultiplesException();
+            //throw new ContactMultiplesException();
         } else {
-            nomExistant=false;
+            idExistant=false;
             //création d'une exception personnalisé suite contact non trouvé lors du query
             //throw new ContactNotFoundException();
         }
@@ -133,10 +134,19 @@ public class Contact {
 
     }
 
-    public boolean isNomExistant() {
-        return nomExistant;
+    public void deleteAll() throws Exception {
+
+        db.delete(TABLE_NAME, null, null);
+
     }
 
+    public boolean getIdExistant() {
+        return idExistant;
+    }
+
+    public boolean isDoublon() {
+        return doublon;
+    }
 
     //création des classes d'exception interne car ne sera utilisé que par la class Contact
 

@@ -75,9 +75,20 @@ public class MainActivity extends AppCompatActivity {
         Contact contact = new Contact(this);
         try {
             contact.selectByNom(etSearch.getText().toString());
-            etId.setText(contact.getId().toString());
-            etName.setText(contact.getNom().toString());
-            etTel.setText(contact.getTel().toString());
+            if (contact.isDoublon() == false) {
+                etId.setText(contact.getId().toString());
+                etName.setText(contact.getNom().toString());
+                etTel.setText(contact.getTel().toString());
+            } else {
+
+                //création de l'intent
+                Intent i = new Intent(this, Listes.class);
+                // Passer une information à la deuxième activité :
+                i.putExtra("nomDoublon", etSearch.getText().toString());
+                i.putExtra("doublon", contact.isDoublon());
+                // Lancer la deuxième activité :
+                startActivity(i);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,14 +109,14 @@ public class MainActivity extends AppCompatActivity {
         Contact contact = new Contact(this);
 
         try {
-            contact.selectByNom(etName.getText().toString());
+            contact.selectById(etId.getId());
             contact.setNom(etName.getText().toString());
             contact.setTel(etTel.getText().toString());
-            if(contact.isNomExistant()==false) {
+            if (contact.getIdExistant() == false) {
                 contact.insert();
                 Toast.makeText(this, "enregistrement ok", Toast.LENGTH_LONG).show();
             }
-            if(contact.isNomExistant()==true) {
+            if (contact.getIdExistant() == true) {
                 contact.update();
                 Toast.makeText(this, "Modification ok", Toast.LENGTH_LONG).show();
             }
@@ -139,6 +150,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show(); // ne retourne pas le choix de l'utilisateur
+        // arrivé à la ligne suivante, l'utilisateur n'a peut être pas encore répondu à la question (car appel asynchrone)
+
+    }
+
+    public void deleteAll(View v) {
+
+        Activity act = this;
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+        builder.setMessage("Voulez-vous TOUT supprimer?");
+        builder.setPositiveButton("Oui je veux TOUT supprimer " + etSearch.getText().toString(), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Contact contact = new Contact(MainActivity.this);
+
+                try {
+                    contact.deleteAll();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Toast.makeText(this, "Suppréssion ok", Toast.LENGTH_LONG).show();
+            }
+        });
+
         builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -151,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void listes(View view) {
         //création de l'intent
-        Intent i = new Intent(this, listes.class);
-
+        Intent i = new Intent(this, Listes.class);
         // Lancer la deuxième activité :
         startActivity(i);
+
     }
 }
