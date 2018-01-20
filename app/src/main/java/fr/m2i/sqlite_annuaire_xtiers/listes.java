@@ -24,7 +24,6 @@ public class listes extends AppCompatActivity {
         //ouverture de la base de donnée (singleton)
         DbInit dbInit = DbInit.getInstance(this);
         db = dbInit.getWritableDatabase();
-
         lv1 = findViewById(R.id.listeAnnuaire);
 
         ArrayList<String> list = new ArrayList<String>(1);
@@ -33,7 +32,7 @@ public class listes extends AppCompatActivity {
         //lecture pas a pas dans la bdd
 
         Cursor cursor = db.query("contacts", columns, "", null, null, null, null);
-        if (cursor.getCount() > 0) {
+        if (cursor.getCount() > 1) {
             cursor.moveToFirst();
             while (cursor.moveToNext()) {
                 list.add("Id : " + cursor.getString(0) + "   Nom : " + cursor.getString(1) + "   Tel : " + cursor.getString(2));
@@ -42,4 +41,5 @@ public class listes extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, list);
         lv1.setAdapter(adapter);
     }
+    
 }
