@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             contact.selectByNom(etName.getText().toString());
             contact.setNom(etName.getText().toString());
             contact.setTel(etTel.getText().toString());
-
             if(contact.isNomExistant()==false) {
                 contact.insert();
                 Toast.makeText(this, "enregistrement ok", Toast.LENGTH_LONG).show();
